@@ -12,8 +12,8 @@ module Sprockets
         config.assets.precompile = [/(?:\/|\\|\A)application\.(css|js)$/]
         config.assets.version    = ""
         config.assets.debug      = false
-        config.assets.compile    = true
-        config.assets.digest     = false
+        config.assets.compile    = !::NYNY.env.production?
+        config.assets.digest     = ::NYNY.env.production?
       end
 
       def self.build_environment app
@@ -42,6 +42,7 @@ module Sprockets
           app.scope_class.assets_environment = app.assets
           app.scope_class.assets_manifest = Sprockets::Manifest.new(app.assets, manifest_path)
         else
+          app.use Rack::Static, :urls => ['/assets'], :root => 'public'
           app.scope_class.assets_manifest = Sprockets::Manifest.new(manifest_path)
         end
       end
