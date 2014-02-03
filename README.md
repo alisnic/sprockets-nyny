@@ -1,6 +1,6 @@
 # Sprockets::Nyny
 
-TODO: Write a gem description
+Provides integration for asset pipeline into New York, New York
 
 ## Installation
 
@@ -18,7 +18,49 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'nyny'
+require 'sprockets/nyny'
+
+class App < NYNY::App
+  register Sprockets::NYNY
+
+  get '/' do
+    #...
+  end
+end
+```
+
+## Configuring
+
+You can configure the asset pipeline the same way you configure it in Rails:
+```ruby
+class App < NYNY::App
+  register Sprockets::NYNY
+
+  config.assets.debug = true
+  ...
+
+  #...
+end
+```
+You can view the configuration defaults [here][defaults]
+
+## Compiling for production
+For that, you need a Rakefile:
+```ruby
+require 'sprockets/nyny'
+require_relative 'server'
+
+Sprockets::NYNY.load_tasks(App)
+
+task :environment do
+  App.new #=> needed for the the hooks to run, add your env logic below
+end
+```
+(where server.rb is the file with the code of your app)
+
+`rake assets:precompile` - will compile to the `public` path
 
 ## Contributing
 
@@ -27,3 +69,5 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+[defaults]: https://github.com/alisnic/sprockets-nyny/blob/master/lib/sprockets/nyny/builder.rb#L6
