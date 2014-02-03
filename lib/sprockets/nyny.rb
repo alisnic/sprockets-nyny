@@ -33,7 +33,7 @@ module Sprockets
     end
 
     def self.registered app
-      app.send :include, ActiveSupport::Configurable
+      app.inheritable :config, OpenStruct.new
       app.inheritable :before_run_hooks, []
 
       app.helpers ActionView::Helpers::AssetUrlHelper
