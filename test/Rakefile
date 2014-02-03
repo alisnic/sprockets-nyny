@@ -4,5 +4,5 @@ require_relative 'server'
 Sprockets::NYNY.load_tasks(App)
 
 task :environment do
-  #
+  App.new
 end

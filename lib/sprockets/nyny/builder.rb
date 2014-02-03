@@ -60,7 +60,6 @@ module Sprockets
           app.assets = app.assets.index if ::NYNY.env.production?
 
           if config.assets.compile
-            p config.assets.prefix, app.assets
             app.builder.map (config.assets.prefix) { run app.assets }
           end
         end

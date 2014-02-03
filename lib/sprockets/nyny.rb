@@ -1,3 +1,4 @@
+require 'rack'
 require 'sprockets/nyny/version'
 require 'sprockets/nyny/builder'
 
