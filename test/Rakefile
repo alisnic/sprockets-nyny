@@ -2,3 +2,7 @@ require 'sprockets/nyny'
 require_relative 'server'
 
 Sprockets::NYNY.load_tasks(App)
+
+task :environment do
+  #
+end

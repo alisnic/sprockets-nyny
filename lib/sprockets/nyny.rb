@@ -1,6 +1,22 @@
 require 'sprockets/nyny/version'
 require 'sprockets/nyny/builder'
 
+module Rack
+  class Builder
+    #1.6 backport
+    def warmup(prc=nil, &block)
+      @warmup = prc || block
+    end
+
+    alias_method :build_app, :to_app
+    def to_app
+      app = build_app
+      @warmup.call(app) if @warmup
+      app
+    end
+  end
+end
+
 module Sprockets
   module NYNY
     def self.load_tasks app
@@ -8,12 +24,8 @@ module Sprockets
       Sprockets::Rails::Task.new(app)
     end
 
-    alias_method :run!, :original_run
-    def run! port=9292
-      before_run_hooks.each do |hook|
-        hook.call(self)
-      end
-      original_run(port)
+    def root
+      ::NYNY.root
     end
 
     def before_run &block
@@ -22,15 +34,19 @@ module Sprockets
 
     def self.registered app
       app.send :include, ActiveSupport::Configurable
-      app.inheritable :before_run_hooks,  []
-      app.inheritable :assets,            Sprockets::Environment.new
+      app.inheritable :before_run_hooks, []
 
       app.helpers ActionView::Helpers::AssetUrlHelper
       app.helpers ActionView::Helpers::AssetTagHelper
       app.helpers Sprockets::Rails::Helper
 
+      Builder.build_environment(app)
       Builder.build_config(app.config)
       Builder.add_hooks(app)
+
+      app.builder.warmup do
+        app.before_run_hooks.each {|h| h.call(app)}
+      end
     end
   end
 end

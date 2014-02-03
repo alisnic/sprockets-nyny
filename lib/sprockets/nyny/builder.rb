@@ -26,8 +26,17 @@ module Sprockets
         config.assets.digest     = false
       end
 
+      def self.build_environment app
+        sprockets = Sprockets::Environment.new do |env|
+          env.version = ::NYNY.env
+          path = ::NYNY.root.join "/tmp/cache/assets/#{::NYNY.env}"
+          env.cache = Sprockets::Cache::FileStore.new(path)
+        end
+
+        app.inheritable :assets, sprockets
+      end
+
       def self.configure_scope config, app
-        # Copy config.assets.paths to Sprockets
         config.assets.paths.each do |path|
           app.assets.append_path path
         end
@@ -36,7 +45,7 @@ module Sprockets
         app.scope_class.digest_assets = config.assets.digest
         app.scope_class.assets_prefix = config.assets.prefix
 
-        manifest_path = ::NYNY.root.join 'public', config.assets.prefix
+        manifest_path = "#{::NYNY.root}/public/#{config.assets.prefix}"
 
         if config.assets.compile
           app.scope_class.assets_environment = app.assets
@@ -67,12 +76,8 @@ module Sprockets
             app.assets = app.assets.index
           end
 
-          Sprockets::Rails::Helper.precompile         ||= app.config.assets.precompile
-          Sprockets::Rails::Helper.assets             ||= app.assets
-          Sprockets::Rails::Helper.raise_runtime_errors = app.config.assets.raise_runtime_errors
-
           if config.assets.compile
-            builder.map (app.config.asssets.prefix) { run app.assets }
+            app.builder.map (config.assets.prefix) { run app.assets }
           end
         end
       end
