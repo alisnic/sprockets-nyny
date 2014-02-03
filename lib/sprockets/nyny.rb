@@ -3,16 +3,32 @@ require 'sprockets/rails/helper'
 
 module Sprockets
   module NYNY
+    DEFAULT_PATHS = [
+      'app/assets/javascripts',
+      'app/assets/stylesheets',
+      'app/assets/images'
+    ]
+
+    DEFAULT_URL = '/assets'
+
     def self.load_tasks!
-      #TODO: implement
+      require 'sprockets/rails/task'
     end
 
-    def enable_sprockets options
+    def assets
+      scope_class.assets_environment
+    end
+
+    def serve_assets! options={}
       sprockets = Sprockets::Environment.new
-      options.fetch(:paths, []).each {|path| sprockets.append_path(path)}
+      sprockets.logger = Logger.new(STDOUT)
+
+      options.fetch(:paths, DEFAULT_PATHS).each do |path|
+        sprockets.append_path(path)
+      end
       sprockets = sprockets.index if ::NYNY.env.production?
 
-      prefix = options.fetch(:url, '/assets')
+      prefix = options.fetch(:url, DEFAULT_URL)
       scope_class.assets_environment  = sprockets
       scope_class.assets_prefix       = prefix
       builder.map (prefix) { run sprockets }
