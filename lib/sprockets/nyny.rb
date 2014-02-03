@@ -10,9 +10,8 @@ module Rack
 
     alias_method :build_app, :to_app
     def to_app
-      app = build_app
-      @warmup.call(app) if @warmup
-      app
+      @warmup.call if @warmup
+      build_app
     end
   end
 end
