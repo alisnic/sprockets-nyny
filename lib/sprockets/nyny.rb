@@ -1,43 +1,36 @@
 require 'sprockets/nyny/version'
-require 'sprockets/rails/helper'
+require 'sprockets/nyny/builder'
 
 module Sprockets
   module NYNY
-    DEFAULT_PATHS = [
-      'app/assets/javascripts',
-      'app/assets/stylesheets',
-      'app/assets/images'
-    ]
-
-    DEFAULT_URL = '/assets'
-
-    def self.load_tasks!
+    def self.load_tasks app
       require 'sprockets/rails/task'
+      Sprockets::Rails::Task.new(app)
     end
 
-    def assets
-      scope_class.assets_environment
-    end
-
-    def serve_assets! options={}
-      sprockets = Sprockets::Environment.new
-      sprockets.logger = Logger.new(STDOUT)
-
-      options.fetch(:paths, DEFAULT_PATHS).each do |path|
-        sprockets.append_path(path)
+    alias_method :run!, :original_run
+    def run! port=9292
+      before_run_hooks.each do |hook|
+        hook.call(self)
       end
-      sprockets = sprockets.index if ::NYNY.env.production?
+      original_run(port)
+    end
 
-      prefix = options.fetch(:url, DEFAULT_URL)
-      scope_class.assets_environment  = sprockets
-      scope_class.assets_prefix       = prefix
-      builder.map (prefix) { run sprockets }
+    def before_run &block
+      before_run_hooks << Proc.new(&block)
     end
 
     def self.registered app
+      app.send :include, ActiveSupport::Configurable
+      app.inheritable :before_run_hooks,  []
+      app.inheritable :assets,            Sprockets::Environment.new
+
       app.helpers ActionView::Helpers::AssetUrlHelper
       app.helpers ActionView::Helpers::AssetTagHelper
       app.helpers Sprockets::Rails::Helper
+
+      Builder.build_config(app.config)
+      Builder.add_hooks(app)
     end
   end
 end

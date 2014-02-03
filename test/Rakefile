@@ -1,3 +1,4 @@
 require 'sprockets/nyny'
+require_relative 'server'
 
-Sprockets::NYNY.load_tasks!
+Sprockets::NYNY.load_tasks(App)
