@@ -5,12 +5,12 @@ require 'sprockets/nyny/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "sprockets-nyny"
-  spec.version       = Nyny::Assets::VERSION
+  spec.version       = Sprockets::NYNY::VERSION
   spec.authors       = ["Andrei Lisnic"]
   spec.email         = ["andrei.lisnic@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{assets pipeline for NYNY}
+  spec.description   = %q{Provides integration for asset pipeline into New York, New York}
+  spec.homepage      = "https://github.com/alisnic/sprockets-nyny"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
