@@ -1,4 +1,4 @@
-# Sprockets::Nyny
+# Sprockets::NYNY
 
 Provides integration for asset pipeline into New York, New York
 
@@ -30,6 +30,9 @@ class App < NYNY::App
   end
 end
 ```
+
+After that, you can use `javascript_include_tag` and other assets pipeline
+goodies in views, as you are used to in Rails.
 
 ## Configuring
 
