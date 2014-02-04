@@ -7,6 +7,9 @@ require 'sprockets/nyny'
 class App < NYNY::App
   register Sprockets::NYNY
   config.assets.precompile << 'app/assets/javascripts/application.js'
+  config.assets.compress = true
+  config.assets.js_compressor = :uglify
+  config.assets.css_compressor = :sass
 
   get '/' do
     render 'app/views/index.haml'

@@ -5,12 +5,10 @@ module Sprockets
     class Builder
       def self.build_config config
         config.assets            = ActiveSupport::OrderedOptions.new
-        config.assets._blocks    = []
         config.assets.paths      = ['app/assets/javascripts',
           'app/assets/stylesheets', 'app/assets/images']
         config.assets.prefix     = "/assets"
         config.assets.precompile = [/(?:\/|\\|\A)application\.(css|js)$/]
-        config.assets.version    = ""
         config.assets.debug      = false
         config.assets.compile    = !::NYNY.env.production?
         config.assets.digest     = ::NYNY.env.production?
@@ -48,7 +46,7 @@ module Sprockets
       end
 
       def self.add_hooks app
-        app.before_run do |app|
+        app.before_initialize do
           config = app.config
 
           unless config.assets.version.blank?
