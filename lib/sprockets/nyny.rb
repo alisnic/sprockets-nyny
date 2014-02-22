@@ -12,10 +12,6 @@ module Sprockets
       ::NYNY.root
     end
 
-    def before_run &block
-      before_run_hooks << Proc.new(&block)
-    end
-
     def self.registered app
       app.helpers ActionView::Helpers::AssetUrlHelper
       app.helpers ActionView::Helpers::AssetTagHelper
